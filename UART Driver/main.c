@@ -126,12 +126,12 @@ void readFIJO(){
 		}
 
 		//Convert the byte array into an fijo struct
-		struct fijo *ptr = (struct fijo*)buf;
-		in.takeoffCommand = ptr->takeoffCommand;
-		in.qrScanFlag = ptr->qrScanFlag;
-		in.detectFlag = ptr->detectFlag;
-		in.gpsCoord.lattitude = ptr->gpsCoord.lattitude;
-		in.gpsCoord.longtitude = ptr->gpsCoord.longtitude;
+		struct fijo *byteToStruct = (struct fijo*)buf;
+		in.takeoffCommand = byteToStruct->takeoffCommand;
+		in.qrScanFlag = byteToStruct->qrScanFlag;
+		in.detectFlag = byteToStruct->detectFlag;
+		in.gpsCoord.lattitude = byteToStruct->gpsCoord.lattitude;
+		in.gpsCoord.longtitude = byteToStruct->gpsCoord.longtitude;
 
 		//Send in into telemetry manager
 	}
