@@ -79,6 +79,7 @@ struct eulerAnglesOfPlane{
 };
 
 //Should be 37 bytes but because of padding its really 48 bytes
+//Flight Controller In Jetson Out
  struct foji{
 	uint8_t start;
 	struct gpsCoordinatesFOJI gpsCoord;
@@ -86,6 +87,7 @@ struct eulerAnglesOfPlane{
 };
 
 //Should be 20 bytes but because of padding its really 24 bytes
+//Flight Controller Out Jetson In
 struct fijo{
 	 uint8_t start;
 	_Bool takeoffCommand;
@@ -94,7 +96,7 @@ struct fijo{
 	struct gpsCoordinatesFIJO gpsCoord;
 };
 
-const uint8_t STARTBYTE = 0x24;
+const uint8_t START_BYTE = 0x24;
 
 void sendFOJI(){
 	//Get out from telemetry manager
@@ -109,16 +111,16 @@ void readFIJO(){
 	uint8_t buf[sizeof(struct fijo)];
 
 	//Initializes starting byte
-	buf[0] = STARTBYTE;
+	buf[0] = START_BYTE;
 
-	struct fijo in;
-	in.start = STARTBYTE;
+	struct fijo msg_from_jetson;
+	msg_from_jetson.start = START_BYTE;
 
-	//Receives a byte to check if its the same as STARTBYTE
+	//Receives a byte to check if its the same as START_BYTE
 	uint8_t check;
-	HAL_UART_Receive(&huart2, &check, 1, HAL_MAX_DELAY);
+	HAL_UART_Receive_IT(&huart2, &check, 1);
 
-	if(check == STARTBYTE){
+	if(check == START_BYTE){
 		//Receive all the message bytes in buf
 		for(uint16_t i = 1; i < sizeof(struct fijo); i++)
 		{
@@ -127,13 +129,13 @@ void readFIJO(){
 
 		//Convert the byte array into an fijo struct
 		struct fijo *byteToStruct = (struct fijo*)buf;
-		in.takeoffCommand = byteToStruct->takeoffCommand;
-		in.qrScanFlag = byteToStruct->qrScanFlag;
-		in.detectFlag = byteToStruct->detectFlag;
-		in.gpsCoord.lattitude = byteToStruct->gpsCoord.lattitude;
-		in.gpsCoord.longtitude = byteToStruct->gpsCoord.longtitude;
+		msg_from_jetson.takeoffCommand = byteToStruct->takeoffCommand;
+		msg_from_jetson.qrScanFlag = byteToStruct->qrScanFlag;
+		msg_from_jetson.detectFlag = byteToStruct->detectFlag;
+		msg_from_jetson.gpsCoord.lattitude = byteToStruct->gpsCoord.lattitude;
+		msg_from_jetson.gpsCoord.longtitude = byteToStruct->gpsCoord.longtitude;
 
-		//Send in into telemetry manager
+		//Send msg_from_jetson into telemetry manager
 	}
 }
 /* USER CODE END 0 */
