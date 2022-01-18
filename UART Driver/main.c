@@ -79,7 +79,7 @@ struct eulerAnglesOfPlane{
 };
 
 //Should be 37 bytes but because of padding its really 48 bytes
-//Flight Controller In Jetson Out
+//Flight Controller Out Jetson In
  struct foji{
 	uint8_t start;
 	struct gpsCoordinatesFOJI gpsCoord;
@@ -87,7 +87,7 @@ struct eulerAnglesOfPlane{
 };
 
 //Should be 20 bytes but because of padding its really 24 bytes
-//Flight Controller Out Jetson In
+//Flight Controller In Jetson Out
 struct fijo{
 	 uint8_t start;
 	_Bool takeoffCommand;
