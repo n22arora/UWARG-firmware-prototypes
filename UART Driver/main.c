@@ -86,10 +86,9 @@ struct eulerAnglesOfPlane{
 	struct eulerAnglesOfPlane anglesOfPlane;
 };
 
-//Should be 20 bytes but because of padding its really 24 bytes
+//Should be 19 bytes but because of padding its really 24 bytes
 //Flight Controller In Jetson Out
 struct fijo{
-	 uint8_t start;
 	_Bool takeoffCommand;
 	_Bool qrScanFlag;
 	_Bool detectFlag;
@@ -106,26 +105,19 @@ void sendFOJI(){
 
 }
 
+//Creates byte array
+uint8_t buf[sizeof(struct fijo)];
+
+//Creates the byte used to confirm if the received bytes are a valid message
+uint8_t check;
+
 void readFIJO(){
-	//Creates byte array
-	uint8_t buf[sizeof(struct fijo)];
-
-	//Initializes starting byte
-	buf[0] = START_BYTE;
-
 	struct fijo msg_from_jetson;
-	msg_from_jetson.start = START_BYTE;
 
 	//Receives a byte to check if its the same as START_BYTE
-	uint8_t check;
 	HAL_UART_Receive_IT(&huart2, &check, 1);
 
 	if(check == START_BYTE){
-		//Receive all the message bytes in buf
-		for(uint16_t i = 1; i < sizeof(struct fijo); i++)
-		{
-			HAL_UART_Receive(&huart2, &buf[i], 1, HAL_MAX_DELAY);
-		}
 
 		//Convert the byte array into an fijo struct
 		struct fijo *byteToStruct = (struct fijo*)buf;
@@ -136,6 +128,9 @@ void readFIJO(){
 		msg_from_jetson.gpsCoord.longtitude = byteToStruct->gpsCoord.longtitude;
 
 		//Send msg_from_jetson into telemetry manager
+
+		//Resets the check byte
+		check = 0;
 	}
 }
 /* USER CODE END 0 */
@@ -272,7 +267,12 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	//If check is the correct byte, the following bytes can be stored in the buffer array to then be parsed into an fijo struct
+	if(check == START_BYTE){
+		HAL_UART_Receive(&huart2, buf, sizeof(buf), HAL_MAX_DELAY);
+	}
+}
 /* USER CODE END 4 */
 
 /**
@@ -306,4 +306,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
