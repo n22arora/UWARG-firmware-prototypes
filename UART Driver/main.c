@@ -78,10 +78,9 @@ struct eulerAnglesOfPlane{
 	float roll;
 };
 
-//Should be 37 bytes but because of padding its really 48 bytes
+//Should be 36 bytes but because of padding its really 40 bytes
 //Flight Controller Out Jetson In
  struct foji{
-	uint8_t start;
 	struct gpsCoordinatesFOJI gpsCoord;
 	struct eulerAnglesOfPlane anglesOfPlane;
 };
@@ -100,7 +99,7 @@ const uint8_t START_BYTE = 0x24;
 void sendFOJI(){
 	//Get msg_to_jetson from telemetry manager
 	struct foji msg_to_jetson;
-
+  HAL_UART_Transmit(&huart2, &START_BYTE, sizeof(START_BYTE), HAL_MAX_DELAY);
 	HAL_UART_Transmit(&huart2, &msg_to_jetson, sizeof(struct foji), HAL_MAX_DELAY);
 
 }
