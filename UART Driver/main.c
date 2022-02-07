@@ -60,29 +60,16 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN 0 */
 
 //Creates the fijo and foji struct
-//The reason there are 2 different gpsCoordinates structs is to minimize the size of the fijo struct
-struct gpsCoordinatesFOJI{
-	double lattitude;
-	double longtitude;
-	double altitude;
-};
-
-struct gpsCoordinatesFIJO{
-	double lattitude;
-	double longtitude;
-};
-
-struct eulerAnglesOfPlane{
-	float yaw;
-	float pitch;
-	float roll;
-};
 
 //Should be 36 bytes but because of padding its really 40 bytes
 //Flight Controller Out Jetson In
  struct foji{
-	struct gpsCoordinatesFOJI gpsCoord;
-	struct eulerAnglesOfPlane anglesOfPlane;
+	double lattitude;
+	double longtitude;
+	double altitude;
+	float yaw;
+	float pitch;
+	float roll;
 };
 
 //Should be 19 bytes but because of padding its really 24 bytes
@@ -91,7 +78,8 @@ struct fijo{
 	_Bool takeoffCommand;
 	_Bool qrScanFlag;
 	_Bool detectFlag;
-	struct gpsCoordinatesFIJO gpsCoord;
+	double lattitude;
+	double longtitude;
 };
 
 const uint8_t START_BYTE = 0x24;
