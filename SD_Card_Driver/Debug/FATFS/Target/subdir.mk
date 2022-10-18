@@ -5,16 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../FATFS/Target/los_drv_sd_diskio_spi.c \
+../FATFS/Target/LOS_D_sd_spi.c \
 ../FATFS/Target/user_diskio.c 
 
-OBJS += \
-./FATFS/Target/los_drv_sd_diskio_spi.o \
-./FATFS/Target/user_diskio.o 
-
 C_DEPS += \
-./FATFS/Target/los_drv_sd_diskio_spi.d \
+./FATFS/Target/LOS_D_sd_spi.d \
 ./FATFS/Target/user_diskio.d 
+
+OBJS += \
+./FATFS/Target/LOS_D_sd_spi.o \
+./FATFS/Target/user_diskio.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -24,7 +24,7 @@ FATFS/Target/%.o FATFS/Target/%.su: ../FATFS/Target/%.c FATFS/Target/subdir.mk
 clean: clean-FATFS-2f-Target
 
 clean-FATFS-2f-Target:
-	-$(RM) ./FATFS/Target/los_drv_sd_diskio_spi.d ./FATFS/Target/los_drv_sd_diskio_spi.o ./FATFS/Target/los_drv_sd_diskio_spi.su ./FATFS/Target/user_diskio.d ./FATFS/Target/user_diskio.o ./FATFS/Target/user_diskio.su
+	-$(RM) ./FATFS/Target/LOS_D_sd_spi.d ./FATFS/Target/LOS_D_sd_spi.o ./FATFS/Target/LOS_D_sd_spi.su ./FATFS/Target/user_diskio.d ./FATFS/Target/user_diskio.o ./FATFS/Target/user_diskio.su
 
 .PHONY: clean-FATFS-2f-Target
 

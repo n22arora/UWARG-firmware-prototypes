@@ -1,0 +1,11 @@
+../Core/Inc/LOS_D_sd.hpp:31:14:static BYTE SDCard::posix_to_fatfs_flag(const char*)	16	static
+../Core/Src/LOS_D_sd.cpp:3:1:SDCard::SDCard(const char*, int*)	24	static
+../Core/Src/LOS_D_sd.cpp:8:1:SDCard::~SDCard()	16	static
+../Core/Src/LOS_D_sd.cpp:13:5:int SDCard::fopen(SD_FILE*, const char*, const char*)	24	static
+../Core/Src/LOS_D_sd.cpp:18:5:int SDCard::fclose(SD_FILE*)	16	static
+../Core/Src/LOS_D_sd.cpp:23:8:size_t SDCard::fread(void*, size_t, size_t, SD_FILE*)	32	static
+../Core/Src/LOS_D_sd.cpp:31:8:size_t SDCard::fwrite(void*, size_t, size_t, SD_FILE*)	32	static
+../Core/Src/LOS_D_sd.cpp:39:5:int SDCard::fseek(SD_FILE*, long int, int)	32	static
+../Core/Src/LOS_D_sd.cpp:62:6:long int SDCard::ftell(SD_FILE*)	16	static
+../Core/Src/LOS_D_sd.cpp:67:7:char* SDCard::fgets(char*, int, SD_FILE*)	24	static
+../Core/Src/LOS_D_sd.cpp:72:5:int SDCard::fputs(const char*, SD_FILE*)	24	static

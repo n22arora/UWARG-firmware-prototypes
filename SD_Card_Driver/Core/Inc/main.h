@@ -75,6 +75,7 @@ void Error_Handler(void);
 #define SWO_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 #define LOS_DRV_SD_SPI_HANDLE hspi2
+#define DEBUG_UART huart2
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

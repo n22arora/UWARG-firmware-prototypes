@@ -19,6 +19,18 @@ RM := rm -rf
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(CC_DEPS)),)
+-include $(CC_DEPS)
+endif
+ifneq ($(strip $(C++_DEPS)),)
+-include $(C++_DEPS)
+endif
+ifneq ($(strip $(C_UPPER_DEPS)),)
+-include $(C_UPPER_DEPS)
+endif
+ifneq ($(strip $(CXX_DEPS)),)
+-include $(CXX_DEPS)
+endif
 ifneq ($(strip $(S_DEPS)),)
 -include $(S_DEPS)
 endif
@@ -27,6 +39,9 @@ ifneq ($(strip $(S_UPPER_DEPS)),)
 endif
 ifneq ($(strip $(C_DEPS)),)
 -include $(C_DEPS)
+endif
+ifneq ($(strip $(CPP_DEPS)),)
+-include $(CPP_DEPS)
 endif
 endif
 
@@ -38,34 +53,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := SD_Card_Driver
+BUILD_ARTIFACT_NAME := SD_Card_Driver_F401
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-SD_Card_Driver.elf \
+SD_Card_Driver_F401.elf \
 
 MAP_FILES += \
-SD_Card_Driver.map \
+SD_Card_Driver_F401.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-SD_Card_Driver.list \
+SD_Card_Driver_F401.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: SD_Card_Driver.elf secondary-outputs
+main-build: SD_Card_Driver_F401.elf secondary-outputs
 
 # Tool invocations
-SD_Card_Driver.elf SD_Card_Driver.map: $(OBJS) $(USER_OBJS) C:\Programming\ Stuff\Waterloo\ Aerial\ Robotics\ Club\UWARG-firmware-prototypes\SD_Card_Driver\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "SD_Card_Driver.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Programming Stuff\Waterloo Aerial Robotics Club\UWARG-firmware-prototypes\SD_Card_Driver\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SD_Card_Driver.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+SD_Card_Driver_F401.elf SD_Card_Driver_F401.map: $(OBJS) $(USER_OBJS) C:\Programming\ Stuff\Waterloo\ Aerial\ Robotics\ Club\UWARG-firmware-prototypes\SD_Card_Driver\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "SD_Card_Driver_F401.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Programming Stuff\Waterloo Aerial Robotics Club\UWARG-firmware-prototypes\SD_Card_Driver\STM32F401RETX_FLASH.ld" -Wl,-Map="SD_Card_Driver_F401.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +89,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-SD_Card_Driver.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "SD_Card_Driver.list"
+SD_Card_Driver_F401.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "SD_Card_Driver_F401.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) SD_Card_Driver.elf SD_Card_Driver.list SD_Card_Driver.map default.size.stdout
+	-$(RM) SD_Card_Driver_F401.elf SD_Card_Driver_F401.list SD_Card_Driver_F401.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
