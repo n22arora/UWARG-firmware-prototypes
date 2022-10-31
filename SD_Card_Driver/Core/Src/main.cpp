@@ -62,7 +62,8 @@ void myprintf(const char *fmt, ...);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void myprintf(const char *fmt, ...) {
+void myprintf(const char *fmt, ...)
+{
   static char buffer[256];
   va_list args;
   va_start(args, fmt);
@@ -71,6 +72,75 @@ void myprintf(const char *fmt, ...) {
 
   int len = strlen(buffer);
   HAL_UART_Transmit(&huart2, (uint8_t*)buffer, len, -1);
+}
+
+void test()
+{
+	int res;
+	StorageDevice* storageDevice = &SDCard::getInstance();
+
+	/* Init storage device */
+	res = storageDevice->init();
+	if (res == 0) {
+		myprintf("* Initialized storage device\r\n");
+	} else {
+		myprintf("* Failed to initialize storage device! Error code = %d\r\n", res);
+		return;
+	}
+
+	const char* fileName = "test.txt";
+	const char* writeData = "test\ntest";
+	size_t writeDataSize = strlen(writeData);
+	uint8_t* readData;
+	size_t fileSize;
+
+	/* Check if file exists */
+	bool fileExist = storageDevice->checkExist(fileName);
+	if (fileExist) {
+		myprintf("* Test file \"%s\" exists. Please delete it and run the test again.\r\n", fileName);
+		goto end;
+	} else {
+		myprintf("* Test file does not exist. Continuing...\r\n", fileName);
+	}
+
+	/* Write test */
+	res = storageDevice->write(fileName, (uint8_t*)writeData, writeDataSize, 0);
+	if (res == 0) {
+		myprintf("* Created the test file and wrote %d bytes to it\r\n", writeDataSize);
+	} else {
+		myprintf("* Failed to write to test file! Error code = %d\r\n", res);
+		goto end;
+	}
+
+	/* Length test */
+	fileSize = storageDevice->length(fileName);
+	if (fileSize == writeDataSize) {
+		myprintf("* length() returned the correct file size: %d bytes\r\n", fileSize);
+	} else {
+		myprintf("* length() returned the wrong file size! Expected %d bytes but got %d bytes\r\n", writeDataSize, fileSize);
+		goto end;
+	}
+
+	/* Read test */
+	readData = (uint8_t*)malloc(fileSize + 1);
+	memset(readData, 0, fileSize + 1);
+	res = storageDevice->read(fileName, readData, fileSize, 0);
+	if (res == 0) {
+		myprintf("* Read test file content:\r\n%s\r\n", (char*)readData);
+	} else {
+		myprintf("* Failed to read test file content! Error code = %d\r\n", res);
+		goto end;
+	}
+	free(readData);
+
+end:
+	/* Clean up storage device */
+	res = storageDevice->cleanup();
+	if (res == 0) {
+		myprintf("* Cleaned up storage device\r\n");
+	} else {
+		myprintf("* Failed to clean up storage device! Error code = %d\r\n", res);
+	}
 }
 /* USER CODE END 0 */
 
@@ -106,86 +176,9 @@ int main(void)
   MX_SPI2_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-
-//  HAL_Delay(1000); /* A short delay to let the SD card settle */
-//
-//  myprintf("\r\nSD Card Demo\r\n");
-//
-//  int fres;
-//  SD_FILE file;
-//  /* Mount FatFS */
-//  SDCard* sd = new SDCard("", &fres);
-//  if (fres != 0) {
-//	  myprintf("error mounting FatFS (%i)\r\n", fres);
-//	  while(1);
-//  }
-//
-//  /* Open file "hello_world.txt" */
-//  fres = sd->fopen(&file, "hello_world.txt", "r+");
-//  if (fres != 0) {
-//    myprintf("fopen error (%i)\r\n", fres);
-//    while(1);
-//  }
-//  myprintf("Opened 'hello_world.txt' for reading and writing\r\n");
-//
-//  /* Read 64 bytes from "hello_world.txt" on the SD card */
-//  char buf[64];
-//  if(sd->fgets(buf, 64, &file) != 0) {
-//	myprintf("Read string from 'hello_world.txt' contents: %s\r\n", buf);
-//  } else {
-//	myprintf("fgets error \r\n");
-//  }
-//
-//  /* Write to "hello_world.txt" */
-//  fres = sd->fseek(&file, 0, LOS_SEEK_END);
-//  if (fres != 0) {
-//	  myprintf("fseek error (%i)\r\n", fres);
-//	  while(1);
-//  }
-//
-//  strcpy(buf, "\r\nHello World Again!\r\n");
-//  size_t bytesWritten = sd->fwrite(buf, sizeof(char), strlen(buf), &file);
-//  if (bytesWritten > 0) {
-//    myprintf("Wrote %d bytes to 'hello_world.txt'!\r\n", bytesWritten);
-//  } else {
-//    myprintf("fwrite error \r\n");
-//  }
-//
-//  /* Close file */
-//  sd->fclose(&file);
-//
-//  /* Dismount FatFS */
-//  delete sd;
-  HAL_Delay(1000); /* A short delay to let the SD card settle */
-
-  int fres;
-  SD_FILE file;
-  /* Using a pointer so we can choose when to be done with it and dismount FatFS */
-  SDCard* sd = new SDCard("", &fres);
-
-  fres = sd->fopen(&file, "data.txt", "w+");
-  if (fres != 0) {
-    /* Failed to open file */
-	myprintf("Failed to open file\r\n");
-  }
-
-  for (int i = 0; i < 10; ++i) {
-	  char buf[100];
-	  sprintf(buf, "Hello World #%d\n", i);
-	  sd->fputs(buf, &file);
-  }
-
-  sd->fseek(&file, 0, LOS_SEEK_SET);
-
-  myprintf("data.txt file content:\r\n");
-  char str[100];
-  while(sd->fgets(str, 100, &file) == str) {
-	  myprintf("%s", str);
-  }
-
-  sd->fclose(&file);
-
-  delete sd; /* Dismount FatFS */
+  myprintf("\r\n--- SD Card Test Start ---\r\n");
+  test();
+  myprintf("--- SD Card Test End --- \r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */

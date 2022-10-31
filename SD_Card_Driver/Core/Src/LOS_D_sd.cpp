@@ -1,75 +1,96 @@
 #include "LOS_D_sd.hpp"
 
-SDCard::SDCard(const char* mount_path, int* result) : path(mount_path)
+int SDCard::init()
 {
-	*result = f_mount(&fs, path, 1);
+	return f_mount(&fs, "", 1);
 }
 
-SDCard::~SDCard()
+int SDCard::open(const char* location)
 {
-	f_mount(NULL, path, 0);
-}
-
-int SDCard::fopen(SD_FILE* fp, const char* file_path, const char* mode)
-{
-	return f_open(fp, file_path, posix_to_fatfs_flag(mode));
-}
-
-int SDCard::fclose(SD_FILE* fp)
-{
-	return f_close(fp);
-}
-
-size_t SDCard::fread(void* buffer, size_t size, size_t count, SD_FILE* fp)
-{
-	size_t bytes_read;
-	int fres = f_read(fp, buffer, size * count, &bytes_read);
-
-	return fres == FR_OK ? bytes_read : 0;
-}
-
-size_t SDCard::fwrite(void* buffer, size_t size, size_t count, SD_FILE* fp)
-{
-	size_t bytes_written;
-	int fres = f_write(fp, buffer, size * count, &bytes_written);
-
-	return fres == FR_OK ? bytes_written : 0;
-}
-
-int SDCard::fseek(SD_FILE* fp, long offset, int origin)
-{
-	int res;
-
-	switch (origin) {
-		case LOS_SEEK_CUR:
-			res = f_lseek(fp, f_tell(fp) + offset);
-			break;
-		case LOS_SEEK_END:
-			res = f_lseek(fp, f_size(fp) + offset);
-			break;
-		default:
-			if (origin < 0) {
-				res = FR_INT_ERR;
-			} else {
-				res = f_lseek(fp, origin + offset);
-			}
-			break;
+	if (fileOpened && strcmp(location, filePath) == 0) {
+		return 0;
 	}
+
+	if (fileOpened) {
+		int res = f_close(&file);
+		if (res != 0) {
+			return res;
+		}
+	}
+
+	int res = f_open(&file, location, FA_OPEN_ALWAYS | FA_WRITE | FA_READ);
+	fileOpened = (res == 0);
 
 	return res;
 }
 
-long SDCard::ftell(SD_FILE* fp)
+bool SDCard::checkExist(const char* location)
 {
-	return f_tell(fp);
+	int res = f_open(&file, location, FA_READ);
+	if (res == 0) {
+		f_close(&file);
+	}
+
+	return res == 0;
 }
 
-char* SDCard::fgets(char* str, int count, SD_FILE* fp)
+int SDCard::read(const char* location, uint8_t* data, size_t size, size_t offset)
 {
-	return f_gets(str, count, fp);
+	int res = this->open(location);
+	if (res != 0) {
+		return res;
+	}
+
+	res = f_lseek(&file, offset);
+	if (res != 0) {
+		return res;
+	}
+
+	size_t bytes_read;
+	res = f_read(&file, data, size, &bytes_read);
+
+	return res;
 }
 
-int SDCard::fputs(const char* str, SD_FILE* fp)
+int SDCard::write(const char* location, uint8_t* data, size_t size, size_t offset)
 {
-	return f_puts(str, fp);
+	int res = this->open(location);
+	if (res != 0) {
+		return res;
+	}
+
+	res = f_lseek(&file, offset);
+	if (res != 0) {
+		return res;
+	}
+
+	size_t bytes_written;
+	res = f_write(&file, data, size, &bytes_written);
+
+	return res;
+}
+
+size_t SDCard::length(const char* location)
+{
+	int res = this->open(location);
+	if (res != 0) {
+		return res;
+	}
+
+	return f_size(&file);
+}
+
+int SDCard::cleanup()
+{
+	if (fileOpened) {
+		f_close(&file);
+	}
+
+	return f_mount(NULL, "", 0);
+}
+
+StorageDevice& SDCard::getInstance()
+{
+	static SDCard singleton;
+	return singleton;
 }

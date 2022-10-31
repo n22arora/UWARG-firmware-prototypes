@@ -33,7 +33,8 @@ Core/Src/LOS_D_sd.o: ../Core/Src/LOS_D_sd.cpp ../Core/Inc/LOS_D_sd.hpp \
  ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/user_diskio.h \
  ../FATFS/Target/LOS_D_sd_spi.h \
  ../Middlewares/Third_Party/FatFs/src/integer.h \
- ../Middlewares/Third_Party/FatFs/src/diskio.h
+ ../Middlewares/Third_Party/FatFs/src/diskio.h \
+ ../Core/Inc/LOS_D_storage_device.hpp
 ../Core/Inc/LOS_D_sd.hpp:
 ../FATFS/App/fatfs.h:
 ../Middlewares/Third_Party/FatFs/src/ff.h:
@@ -74,3 +75,4 @@ Core/Src/LOS_D_sd.o: ../Core/Src/LOS_D_sd.cpp ../Core/Inc/LOS_D_sd.hpp \
 ../FATFS/Target/LOS_D_sd_spi.h:
 ../Middlewares/Third_Party/FatFs/src/integer.h:
 ../Middlewares/Third_Party/FatFs/src/diskio.h:
+../Core/Inc/LOS_D_storage_device.hpp:
