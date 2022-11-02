@@ -76,64 +76,56 @@ void myprintf(const char *fmt, ...)
 
 void test()
 {
-	int res;
+	uint8_t res;
 	StorageDevice* storageDevice = &SDCard::getInstance();
-
-	/* Init storage device */
-	res = storageDevice->init();
-	if (res == 0) {
-		myprintf("* Initialized storage device\r\n");
-	} else {
-		myprintf("* Failed to initialize storage device! Error code = %d\r\n", res);
-		return;
-	}
 
 	const char* fileName = "test.txt";
 	const char* writeData = "test\ntest";
 	size_t writeDataSize = strlen(writeData);
-	uint8_t* readData;
+	char* readData;
 	size_t fileSize;
 
 	/* Check if file exists */
 	bool fileExist = storageDevice->checkExist(fileName);
 	if (fileExist) {
 		myprintf("* Test file \"%s\" exists. Please delete it and run the test again.\r\n", fileName);
-		goto end;
 	} else {
 		myprintf("* Test file does not exist. Continuing...\r\n", fileName);
 	}
 
 	/* Write test */
-	res = storageDevice->write(fileName, (uint8_t*)writeData, writeDataSize, 0);
-	if (res == 0) {
-		myprintf("* Created the test file and wrote %d bytes to it\r\n", writeDataSize);
-	} else {
-		myprintf("* Failed to write to test file! Error code = %d\r\n", res);
-		goto end;
+	if (!fileExist) {
+		res = storageDevice->write(fileName, writeData, writeDataSize);
+		if (res == 0) {
+			myprintf("* Created the test file and wrote %d bytes to it\r\n", writeDataSize);
+		} else {
+			myprintf("* Failed to write to test file! Error code = %d\r\n", res);
+		}
 	}
 
 	/* Length test */
-	fileSize = storageDevice->length(fileName);
-	if (fileSize == writeDataSize) {
-		myprintf("* length() returned the correct file size: %d bytes\r\n", fileSize);
-	} else {
-		myprintf("* length() returned the wrong file size! Expected %d bytes but got %d bytes\r\n", writeDataSize, fileSize);
-		goto end;
+	if (res == 0) {
+		fileSize = storageDevice->length(fileName);
+		if (fileSize == writeDataSize) {
+			myprintf("* length() returned the correct file size: %d bytes\r\n", fileSize);
+		} else {
+			myprintf("* length() returned the wrong file size! Expected %d bytes but got %d bytes\r\n", writeDataSize, fileSize);
+		}
 	}
 
 	/* Read test */
-	readData = (uint8_t*)malloc(fileSize + 1);
-	memset(readData, 0, fileSize + 1);
-	res = storageDevice->read(fileName, readData, fileSize, 0);
-	if (res == 0) {
-		myprintf("* Read test file content:\r\n%s\r\n", (char*)readData);
-	} else {
-		myprintf("* Failed to read test file content! Error code = %d\r\n", res);
-		goto end;
+	if (fileSize == writeDataSize) {
+		readData = (char*)malloc(fileSize + 1);
+		memset(readData, 0, fileSize + 1);
+		res = storageDevice->read(fileName, readData, fileSize);
+		if (res == 0) {
+			myprintf("* Read test file content:\r\n%s\r\n", (char*)readData);
+		} else {
+			myprintf("* Failed to read test file content! Error code = %d\r\n", res);
+		}
+		free(readData);
 	}
-	free(readData);
 
-end:
 	/* Clean up storage device */
 	res = storageDevice->cleanup();
 	if (res == 0) {

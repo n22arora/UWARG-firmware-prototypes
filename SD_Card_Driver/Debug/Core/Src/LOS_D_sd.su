@@ -1,10 +1,11 @@
-../Core/Src/LOS_D_sd.cpp:3:5:virtual int SDCard::init()	16	static
-../Core/Src/LOS_D_sd.cpp:8:5:int SDCard::open(const char*)	24	static
-../Core/Src/LOS_D_sd.cpp:27:6:virtual bool SDCard::checkExist(const char*)	24	static
-../Core/Src/LOS_D_sd.cpp:37:5:virtual int SDCard::read(const char*, uint8_t*, size_t, size_t)	32	static
-../Core/Src/LOS_D_sd.cpp:55:5:virtual int SDCard::write(const char*, uint8_t*, size_t, size_t)	32	static
-../Core/Src/LOS_D_sd.cpp:73:8:virtual size_t SDCard::length(const char*)	24	static
-../Core/Src/LOS_D_sd.cpp:83:5:virtual int SDCard::cleanup()	16	static
 ../Core/Inc/LOS_D_storage_device.hpp:4:7:constexpr StorageDevice::StorageDevice()	16	static
-../Core/Inc/LOS_D_sd.hpp:8:7:SDCard::SDCard()	16	static
-../Core/Src/LOS_D_sd.cpp:92:16:static StorageDevice& SDCard::getInstance()	8	static
+../Core/Src/LOS_D_sd.cpp:3:1:SDCard::SDCard()	16	static
+../Core/Src/LOS_D_sd.cpp:9:9:uint8_t SDCard::open(const char*)	24	static
+../Core/Src/LOS_D_sd.cpp:28:6:virtual bool SDCard::checkExist(const char*)	24	static
+../Core/Src/LOS_D_sd.cpp:39:9:virtual uint8_t SDCard::read(const char*, char*, size_t, size_t)	32	static
+../Core/Src/LOS_D_sd.cpp:55:9:virtual uint8_t SDCard::write(const char*, const char*, size_t, size_t)	32	static
+../Core/Src/LOS_D_sd.cpp:71:8:virtual size_t SDCard::length(const char*)	24	static
+../Core/Src/LOS_D_sd.cpp:82:9:virtual uint8_t SDCard::cleanup()	24	static
+../Core/Src/LOS_D_sd.cpp:94:1:SDCard::~SDCard()	16	static
+../Core/Src/LOS_D_sd.cpp:104:16:void __tcf_0()	8	static
+../Core/Src/LOS_D_sd.cpp:102:16:static StorageDevice& SDCard::getInstance()	8	static

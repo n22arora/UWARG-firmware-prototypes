@@ -5,22 +5,23 @@
 #include "string.h"
 #include "LOS_D_storage_device.hpp"
 
-class SDCard : StorageDevice {
+class SDCard : public StorageDevice {
 	private:
 		FATFS fs;
-		const char* filePath;
-		bool fileOpened = false;
-		FIL file;
+		const char* curOpenFilePath;
+		bool hasFileOpen = false;
+		FIL curOpenFile;
 
-		int open(const char* location);
+		uint8_t open(const char* location);
 
 	public:
-		int init() override;
+		SDCard();
+		~SDCard();
 		bool checkExist(const char* location);
-		int read(const char* location, uint8_t* data, size_t size, size_t offset = 0) override;
-		int write(const char* location, uint8_t* data, size_t size, size_t offset = 0) override;
+		uint8_t read(const char* location, char data[], size_t size, size_t offset = 0) override;
+		uint8_t write(const char* location, const char data[], size_t size, size_t offset = 0) override;
 		size_t length(const char* location) override;
-		int cleanup() override;
+		uint8_t cleanup() override;
 
 		static StorageDevice &getInstance();
 };
