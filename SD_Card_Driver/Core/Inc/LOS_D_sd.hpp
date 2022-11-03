@@ -5,12 +5,14 @@
 #include "string.h"
 #include "LOS_D_storage_device.hpp"
 
+#define MAX_FILE_PATH_LEN 1024
+
 class SDCard : public StorageDevice {
 	private:
 		FATFS fs;
-		const char* curOpenFilePath;
-		bool hasFileOpen = false;
-		FIL curOpenFile;
+		char cur_open_file_path[MAX_FILE_PATH_LEN];
+		bool has_file_open = false;
+		FIL cur_open_file;
 
 		uint8_t open(const char* location);
 

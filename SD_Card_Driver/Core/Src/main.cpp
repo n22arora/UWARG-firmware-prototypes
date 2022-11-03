@@ -80,26 +80,27 @@ void test()
 	StorageDevice* storageDevice = &SDCard::getInstance();
 
 	const char* fileName = "test.txt";
+	const char* fileName2 = "test2.txt";
 	const char* writeData = "test\ntest";
 	size_t writeDataSize = strlen(writeData);
 	char* readData;
 	size_t fileSize;
 
-	/* Check if file exists */
+	/* Check if test file 1 exists */
 	bool fileExist = storageDevice->checkExist(fileName);
 	if (fileExist) {
 		myprintf("* Test file \"%s\" exists. Please delete it and run the test again.\r\n", fileName);
 	} else {
-		myprintf("* Test file does not exist. Continuing...\r\n", fileName);
+		myprintf("* Test file #1 does not exist. Continuing...\r\n", fileName);
 	}
 
 	/* Write test */
 	if (!fileExist) {
 		res = storageDevice->write(fileName, writeData, writeDataSize);
 		if (res == 0) {
-			myprintf("* Created the test file and wrote %d bytes to it\r\n", writeDataSize);
+			myprintf("* Created test file #1 and wrote %d bytes to it\r\n", writeDataSize);
 		} else {
-			myprintf("* Failed to write to test file! Error code = %d\r\n", res);
+			myprintf("* Failed to write to test file #1! Error code = %d\r\n", res);
 		}
 	}
 
@@ -119,11 +120,39 @@ void test()
 		memset(readData, 0, fileSize + 1);
 		res = storageDevice->read(fileName, readData, fileSize);
 		if (res == 0) {
-			myprintf("* Read test file content:\r\n%s\r\n", (char*)readData);
+			myprintf("* Read test file #1 content:\r\n%s\r\n", (char*)readData);
 		} else {
-			myprintf("* Failed to read test file content! Error code = %d\r\n", res);
+			myprintf("* Failed to read test file #1 content! Error code = %d\r\n", res);
 		}
 		free(readData);
+	}
+
+	/* Check if test file 2 exists */
+	fileExist = storageDevice->checkExist(fileName2);
+	if (fileExist) {
+		myprintf("* Test file \"%s\" exists. Please delete it and run the test again.\r\n", fileName2);
+	} else {
+		myprintf("* Test file #2 does not exist. Continuing...\r\n", fileName2);
+	}
+
+	/* Write test 2 */
+	if (!fileExist) {
+		res = storageDevice->write(fileName2, writeData, writeDataSize);
+		if (res == 0) {
+			myprintf("* Created test file #2 and wrote %d bytes to it\r\n", writeDataSize);
+		} else {
+			myprintf("* Failed to write to test file! Error code = %d\r\n", res);
+		}
+	}
+
+	/* Length test 2 */
+	if (res == 0) {
+		fileSize = storageDevice->length(fileName2);
+		if (fileSize == writeDataSize) {
+			myprintf("* length() returned the correct file size: %d bytes\r\n", fileSize);
+		} else {
+			myprintf("* length() returned the wrong file size! Expected %d bytes but got %d bytes\r\n", writeDataSize, fileSize);
+		}
 	}
 
 	/* Clean up storage device */
